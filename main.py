@@ -10,6 +10,7 @@ import functions
 import errors
 import colors
 import voice
+import cursor
 
 
 def main():
@@ -21,12 +22,12 @@ def main():
 	r =	sr.Recognizer()
 	m = sr.Microphone()
 
-	print("\033[2J", end='')
+	print(cursor.clear, end='')
 
 	r.pause_threshold  = 0.5
 	r.energy_threshold = functions.calibrate(m, r)
 
-	print("\033[2J", end='')
+	print(cursor.clear, end='')
 
 	log = open('/tmp/sapphire.log', 'w')
 

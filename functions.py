@@ -7,6 +7,7 @@ import voice
 import errors
 import colors
 import data
+import cursor
 import config.complete
 
 def exit():
@@ -71,12 +72,12 @@ def run_command(m, r, cmd):
 	try:
 		recognized = r.recognize_google(audio)
 		if recognized in data.confirmations:
-			print(colors.blue+"\033[0G//// running" + colors.magenta, cmd + colors.reset)
+			print(colors.blue + cursor.line_start + "//// running" + colors.magenta, cmd + colors.reset)
 			call(["bash", "-c", cmd])
-			print(colors.blue+r"\\\\ finished")
+			print(colors.blue + r"\\\\ finished")
 
 		else:
-			print('\033[0G')
+			print()
 
 	except sr.UnknownValueError:
 		print('\n\n' + errors.recognize + '\n')
