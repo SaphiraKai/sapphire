@@ -7,7 +7,8 @@ IFS='\n'
 PREFIX=${PREFIX:-/usr}
 DESTDIR=${DESTDIR:-}
 
-rm -v $DESTDIR$PREFIX/bin/sapphire
-rm -v $DESTDIR$PREFIX/share/sapphire/main.py
+rm -v  $DESTDIR$PREFIX/bin/sapphire
+rm -rv $DESTDIR$PREFIX/share/sapphire/
 
+echo
 echo 'uninstalled successfully'
