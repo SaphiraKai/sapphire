@@ -6,26 +6,13 @@ import subprocess
 import speech_recognition as sr
 from sys import stdout
 
+import functions
+import errors
+import colors
+import voice
+
 
 openai.api_key = os.environ['OPENAI_KEY']
-
-black          = '\033[30m'
-red            = '\033[31m'
-green          = '\033[32m'
-yellow         = '\033[33m'
-blue           = '\033[34m'
-magenta        = '\033[35m'
-cyan           = '\033[36m'
-white          = '\033[37m'
-bright_black   = '\033[30;1m'
-bright_red     = '\033[31;1m'
-bright_green   = '\033[32;1m'
-bright_yellow  = '\033[33;1m'
-bright_blue    = '\033[34;1m'
-bright_magenta = '\033[35;1m'
-bright_cyan    = '\033[36;1m'
-bright_white   = '\033[37;1m'
-reset          = '\033[0m'
 
 r =	sr.Recognizer()
 m = sr.Microphone()
@@ -44,28 +31,34 @@ previous_reply   = reply
 previous_request = request
 while True:
 	with m as source:
-		print(cyan+"listening: ", end='')
+		voice.play("listening")
+		print(colors.cyan + "listening: " + colors.reset, end='')
 		stdout.flush()
-		subprocess.call(['mpv', '/usr/share/sounds/freedesktop/stereo/window-question.oga'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		audio =	r.listen(source)
 
 	try:
 		recognized = r.recognize_google(audio)
-		print(bright_yellow+recognized, end=reset+'\n\n')
+		request = functions.punctuate(recognized)
+		print(colors.bright_yellow + request + colors.reset + '\n')
 
 	except sr.UnknownValueError:
-		print(f"\n\n{bright_red}error: unable to recognize speech\n")
+		print('\n\n' + errors.recognize + '\n')
+		voice.play('error', block=True)
 		continue
 
 	except sr.RequestError as e:
-		print(f"\n\n{bright_red}error: unable to request results from Google Speech Recognition service: {0}\n".format(e))
-		exit()
+		print('\n\n' + errors.request + e)
+		voice.play('error', block=True)
+		functions.exit()
 
-	if recognized in ['cancel', 'exit', 'done', "that's it", "that's all"]:
-		exit()
+	if recognized in ['nevermind', 'cancel', 'exit', 'done', "that's it", "that's all", "that'll be all"]:
+		functions.exit()
+
+	else:
+		voice.play('processing')
 
 	if request != '': previous_request = request + '\n\n'
-	request = recognized
+	request = functions.punctuate(recognized)
 
 	prompt = f"If you don't understand, say only 'ERROR'.\nIf you run a shell command, prepend it with '$ '.\nExample: $ echo 'hello world'\nIf you are asked to 'write', write a program with the given function in the given language.\n\nInformation about the system:\nOS: Arch Linux\n\n" + previous_request + previous_reply + request
 
@@ -82,35 +75,41 @@ while True:
 		reply =	response.choices[0].text.rstrip().replace('\n\n', '\n')
 
 		if 'ERROR' in reply or reply == '':
-			print(f"{bright_red}error: {reset}please clarify\n")
+			print(errors.clarity + '\n')
+			voice.play('error', block=True)
 
 		elif reply.lstrip()[:2] == '$ ':
 			cmd = reply.lstrip()[2:].split('\n')[0]
 
 			with m as source:
-				print(cyan+"confirm:"+magenta, cmd, end='')
+				voice.play('confirm')
+				print(colors.cyan + "confirm:" + colors.magenta, cmd, end='')
 				stdout.flush()
-				subprocess.call(['mpv', '/usr/share/sounds/freedesktop/stereo/window-question.oga'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 				audio =	r.listen(source)
 
 			try:
 				if r.recognize_google(audio) in ['yes', 'yep', 'yup', 'confirm', 'continue']:
-					print(blue+"\033[0G//// running"+magenta, cmd+reset)
+					print(colors.blue+"\033[0G//// running" + colors.magenta, cmd + colors.reset)
 					subprocess.call(["bash", "-c", cmd])
-					print(blue+r"\\\\ finished")
+					print(colors.blue+r"\\\\ finished")
+
+				else:
+					print('\033[0G')
 
 			except sr.UnknownValueError:
-				print(f"\n\n{bright_red}error: {reset}unable to recognize speech\n")
+				print('\n\n' + errors.recognize + '\n')
+				voice.play('error', block=True)
 				continue
 
 			except sr.RequestError as e:
-				print(f"\n\n{bright_red}error: {reset}unable to request results from Google Speech Recognition service: {0}\n".format(e))
-				exit()
+				print('\n\n' + errors.request + e)
+				voice.play('error', block=True)
+				functions.exit()
 
-			if recognized in ['cancel', 'exit', 'done', "that's it", "that's all"]:
-				exit()
+			if recognized in ['nevermind', 'cancel', 'exit', 'done', "that's it", "that's all", "that'll be all"]:
+				functions.exit()
 
 			print()
 
 		else:
-			print(reset+request + magenta+reply + '\n')
+			print(colors.reset + request + colors.magenta + reply + '\n')
