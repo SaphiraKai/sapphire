@@ -17,13 +17,13 @@ openai.api_key = os.environ['OPENAI_KEY']
 r =	sr.Recognizer()
 m = sr.Microphone()
 
-print("\033[2J")
+print("\033[2J", end='')
 
 with m as source:
 	print("calibrating for ambient noise...")
 	r.adjust_for_ambient_noise(source)
 
-print("\033[2J")
+print("\033[2J", end='')
 
 reply            = ""
 request          = ""
@@ -60,7 +60,7 @@ while True:
 	if request != '': previous_request = request + '\n\n'
 	request = functions.punctuate(recognized)
 
-	prompt = f"If you don't understand, say only 'ERROR'.\nIf you run a shell command, prepend it with '$ '.\nExample: $ echo 'hello world'\nIf you are asked to 'write', write a program with the given function in the given language.\n\nInformation about the system:\nOS: Arch Linux\n\n" + previous_request + previous_reply + request
+	prompt = f"If you don't understand, say only 'ERROR'.\n\nIf you run a shell command, prepend it with '$ '.\nExample: $ echo 'hello world'\n\nIf you are asked to 'write', write a program with the given function in the given language.\n\nInformation about the system:\nOS: Arch Linux\n\n" + previous_request + previous_reply + request
 
 	if request != '':
 		response = openai.Completion.create(
