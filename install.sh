@@ -13,8 +13,12 @@ install -Dvm 644 functions.py $DESTDIR$PREFIX/share/sapphire/functions.py
 install -Dvm 644 colors.py    $DESTDIR$PREFIX/share/sapphire/colors.py
 install -Dvm 644 voice.py     $DESTDIR$PREFIX/share/sapphire/voice.py
 install -Dvm 644 errors.py    $DESTDIR$PREFIX/share/sapphire/errors.py
+install -Dvm 644 data.py      $DESTDIR$PREFIX/share/sapphire/data.py
+install -Dvm 644 cursor.py    $DESTDIR$PREFIX/share/sapphire/cursor.py
 mkdir -p                      $DESTDIR$PREFIX/share/sapphire/voice/
 install -Dvm 644 voice/*.ogg  $DESTDIR$PREFIX/share/sapphire/voice/
+mkdir -p                      $DESTDIR$PREFIX/share/sapphire/config/
+install -Dvm 644 config/*.py  $DESTDIR$PREFIX/share/sapphire/config/
 
 echo
 echo 'installed successfully'
