@@ -25,11 +25,18 @@ with m as source:
 
 print("\033[2J", end='')
 
+log = open('/tmp/sapphire.log', 'w')
+
 reply            = ""
 request          = ""
 previous_reply   = reply
 previous_request = request
 while True:
+	log.write(request + reply + '\n\n')
+
+	previous_request = request + '\n\n'
+	previous_reply = reply + '\n\n'
+
 	with m as source:
 		voice.play("listening")
 		print(colors.cyan + "listening: " + colors.reset, end='')
@@ -49,15 +56,16 @@ while True:
 	except sr.RequestError as e:
 		print('\n\n' + errors.request + e)
 		voice.play('error', block=True)
+		log.close()
 		functions.exit()
 
 	if recognized in ['nevermind', 'cancel', 'exit', 'done', "that's it", "that's all", "that'll be all"]:
+		log.close()
 		functions.exit()
 
 	else:
 		voice.play('processing')
 
-	if request != '': previous_request = request + '\n\n'
 	request = functions.punctuate(recognized)
 
 	prompt = f"If you don't understand, say only 'ERROR'.\n\nIf you run a shell command, prepend it with '$ '.\nExample: $ echo 'hello world'\n\nIf you are asked to 'write', write a program with the given function in the given language.\n\nInformation about the system:\nOS: Arch Linux\n\n" + previous_request + previous_reply + request
@@ -71,7 +79,6 @@ while True:
 			top_p=1,
 		)
 
-		if reply != '': previous_reply = reply + '\n\n'
 		reply =	response.choices[0].text.rstrip().replace('\n\n', '\n')
 
 		if 'ERROR' in reply or reply == '':
@@ -104,9 +111,7 @@ while True:
 			except sr.RequestError as e:
 				print('\n\n' + errors.request + e)
 				voice.play('error', block=True)
-				functions.exit()
-
-			if recognized in ['nevermind', 'cancel', 'exit', 'done', "that's it", "that's all", "that'll be all"]:
+				log.close()
 				functions.exit()
 
 			print()
