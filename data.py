@@ -1,3 +1,4 @@
+#? prompt header template
 header = """If you don't understand, say only 'ERROR'.
 
 If you run a shell command, prepend it with '$ '.
@@ -11,6 +12,7 @@ OS = {operating_system}
 
 """
 
+#? words that start questions
 questions = ['is',
              'can',
              'could',
@@ -27,6 +29,7 @@ questions = ['is',
              'why',
              'would']
 
+#? requests to exit
 exit_requests = ['nevermind.',
 	             'cancel.',
 	             'exit.',
@@ -35,6 +38,7 @@ exit_requests = ['nevermind.',
 	             "that's all.",
 	             "that'll be all."]
 
+#? confirmations to perform an action
 confirmations = ['yes',
                  'yep',
                  'yup',

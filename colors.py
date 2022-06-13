@@ -1,3 +1,4 @@
+#// ANSI color escape codes \\\\\\\\#
 black          = '\033[30m'
 red            = '\033[31m'
 green          = '\033[32m'
@@ -15,3 +16,4 @@ bright_magenta = '\033[35;1m'
 bright_cyan    = '\033[36;1m'
 bright_white   = '\033[37;1m'
 reset          = '\033[0m'
+#\\\\\\\\ ANSI color escape codes //#
