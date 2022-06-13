@@ -49,10 +49,11 @@ def main():
 
 	#// main loop \\\\\\\\#
 	while True:
-		log.write(request + reply + '\n\n')
+		if request != None:
+			log.write(request + reply + '\n\n')
 
-		previous_request = request + '\n\n'
-		previous_reply = reply + '\n\n'
+			previous_request = request + '\n\n'
+			previous_reply = reply + '\n\n'
 
 		#? use speech recognition to prompt the user for a request
 		request = functions.listen(m, r)
@@ -60,6 +61,10 @@ def main():
 		#? check if the user has requested to exit
 		if functions.should_exit(request):
 			break
+
+		#? getting the request failed, restart the loop
+		elif request == None:
+			continue
 
 		#? play processing sound
 		else:
