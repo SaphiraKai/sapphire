@@ -50,7 +50,7 @@ def main():
 	#// main loop \\\\\\\\#
 	while True:
 		if request != None:
-			log.write(request + reply + '\n\n')
+			log.write(request + '\n' + reply + '\n\n')
 
 			previous_request = request + '\n\n'
 			previous_reply = reply + '\n\n'
@@ -75,7 +75,7 @@ def main():
 
 		#? request a completion of the prompt and perform any necessary actions
 		if request != '':
-			functions.complete(m, r, request, prompt)
+			reply = functions.complete(m, r, request, prompt)
 
 	#? stop logging and exit with the exit sound
 	log.close()

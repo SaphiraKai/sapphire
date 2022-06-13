@@ -28,6 +28,8 @@ def get_os():
 			if key[:4] == 'NAME':
 				os = key.split('=')[1]
 
+	return os
+
 
 #? generate a prompt header, containing useful information for the completion
 #  engine to know
@@ -146,8 +148,10 @@ def complete(m, r, request, prompt):
 	elif reply.lstrip()[:2] == '$ ':
 		cmd = reply.lstrip()[2:].split('\n')[0]
 		run_command(m, r, cmd)
+		return '$ ' + cmd
 
 	#? print reply from the engine
 	else:
 		print(colors.reset + request + colors.magenta + reply + '\n')
+		return reply
 #\\\\\\\\ functions //#
