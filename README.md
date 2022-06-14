@@ -23,6 +23,12 @@ Once that's done, Sapphire should use that key and you'll be all set!
 Make sure you set up your API key as explained above.
 
 #### Arch Linux / derivatives
+Install a couple of dependencies from the AUR:
+```
+yay -S python-openai python-speechrecognition
+```
+
+Then run the following commands:
 ```
 git clone https://github.com/SaphiraKai/sapphire
 cd sapphire
