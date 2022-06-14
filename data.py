@@ -1,6 +1,10 @@
 #? prompt header template
 header = """If you don't understand, say only 'ERROR'.
 
+If you are asked to do something, run a shell command to do it.
+Example: get the current time.
+Response: $ date
+
 If you run a shell command, prepend it with '$ '.
 Example: $ echo 'hello world'
 Example: $ for i in *; do echo "found $i"; done
