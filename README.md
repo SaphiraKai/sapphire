@@ -13,7 +13,7 @@ Assuming that isn't a dealbreaker, go ahead and make an account with OpenAI (ema
 
 Once that's done, open the menu in the top right and go to 'View API keys'. Copy your key, then run the following command:
 ```
-printf '\nexport OPENAI_KEY="your api key here"\n' >> ~/.${SHELL}rc
+printf '\nexport OPENAI_KEY="your api key here"\n' >> ~/.$(basename "$SHELL")rc
 ```
 This will create an environment variable containing your API key. Make sure nobody potentially malicious has read access to your shell rc file!
 
