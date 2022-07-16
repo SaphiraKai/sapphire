@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 /usr/share/sapphire/main.py
+python3 /usr/share/sapphire/main.py $@
