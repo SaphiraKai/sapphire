@@ -57,78 +57,100 @@ def calibrate(m, r):
 	return r.energy_threshold
 
 
-#? use speech recognition to get a request from the user
-def listen(m, r):
-
-	#? listen
-	with m as source:
+#? use speech recognition or keyboard input to get a request from the user
+def listen(m, r, use_keyboard):
+	if use_keyboard:
 		voice.play("listening")
-		print(colors.cyan + "listening: " + colors.reset, end='')
-		stdout.flush()
-		audio =	r.listen(source)
-
-	#? attempt to return request
-	try:
-		recognized = r.recognize_google(audio)
-		request = punctuate(recognized)
-		print(colors.bright_yellow + request + colors.reset + '\n')
+		request = input(colors.cyan + "enter request: " + colors.bright_yellow)
+		print(colors.reset)
 
 		return request
 
-	#? didn't understand audio
-	except sr.UnknownValueError:
-		print('\n\n' + errors.recognize + '\n')
-		voice.play('error', block=True)
+	else:
+		#? listen
+		with m as source:
+			voice.play("listening")
+			print(colors.cyan + "listening: " + colors.reset, end='')
+			stdout.flush()
+			audio =	r.listen(source)
 
-	#? unable to contact api
-	except sr.RequestError as e:
-		print('\n\n' + errors.request + e)
-		voice.play('error', block=True)
+		#? attempt to return request
+		try:
+			recognized = r.recognize_google(audio)
+			request = punctuate(recognized)
+			print(colors.bright_yellow + request + colors.reset + '\n')
+
+			return request
+
+		#? didn't understand audio
+		except sr.UnknownValueError:
+			print('\n\n' + errors.recognize + '\n')
+			voice.play('error', block=True)
+
+		#? unable to contact api
+		except sr.RequestError as e:
+			print('\n\n' + errors.request + e)
+			voice.play('error', block=True)
 
 
 #? prompt the user to confirm, then execute a shell command
-def run_command(m, r, cmd):
-	with m as source:
+def run_command(m, r, cmd, use_keyboard):
+	if use_keyboard:
 		voice.play('confirm')
-		print(colors.cyan + "confirm:" + colors.magenta, cmd, end='')
-		stdout.flush()
-		audio =	r.listen(source)
-
-	#? attempt to confirm and run command
-	try:
-		recognized = r.recognize_google(audio)
-		if recognized in data.confirmations:
+		confirmation = input(colors.cyan + "confirm (y/N): " + colors.magenta)
+		print(colors.reset, end='')
+		
+		if confirmation.lower() in ['y', 'yes']:
 			print(colors.blue + cursor.line_start + "//// running" + colors.magenta, cmd + colors.reset)
 			call(["bash", "-c", cmd])
 			print(colors.blue + r"\\\\ finished")
-
+		
 		else:
 			print()
+		
+	else:
+		with m as source:
+			voice.play('confirm')
+			print(colors.cyan + "confirm:" + colors.magenta, cmd, end='')
+			stdout.flush()
+			audio =	r.listen(source)
 
-	#? didn't understand audio
-	except sr.UnknownValueError:
-		print('\n\n' + errors.recognize + '\n')
-		voice.play('error', block=True)
+		#? attempt to confirm and run command
+		try:
+			recognized = r.recognize_google(audio)
+			if recognized in data.confirmations:
+				print(colors.blue + cursor.line_start + "//// running" + colors.magenta, cmd + colors.reset)
+				call(["bash", "-c", cmd])
+				print(colors.blue + r"\\\\ finished")
 
-	#? unable to contact api
-	except sr.RequestError as e:
-		print('\n\n' + errors.request + e)
-		voice.play('error', block=True)
+			else:
+				print()
 
-		return False
+		#? didn't understand audio
+		except sr.UnknownValueError:
+			print('\n\n' + errors.recognize + '\n')
+			voice.play('error', block=True)
 
-	print()
-	return True
+		#? unable to contact api
+		except sr.RequestError as e:
+			print('\n\n' + errors.request + e)
+			voice.play('error', block=True)
+
+			return False
+
+		print()
+		return True
 
 
 #? check whether the user has requested to exit
 def should_exit(request):
-	if request in data.exit_requests: return True
-	else:                             return False
+	if request in data.exit_requests:         return True
+	elif request + '.' in data.exit_requests: return True
+	else:                                     return False
 
 
 #? request a completion of the given prompt
-def complete(m, r, request, prompt):
+def complete(m, r, request, prompt, use_keyboard):
 	#? request completion
 	response = openai.Completion.create(engine=config.complete.engine,
 										prompt=prompt,
@@ -147,7 +169,7 @@ def complete(m, r, request, prompt):
 	#? check if reply is a shell command to be executed
 	elif reply.lstrip()[:2] == '$ ':
 		cmd = reply.lstrip()[2:].split('\n')[0]
-		run_command(m, r, cmd)
+		run_command(m, r, cmd, use_keyboard)
 		return '$ ' + cmd
 
 	#? print reply from the engine

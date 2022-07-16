@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 #// global modules \\\\\\\\#
+import argparse
 import openai
 import os
 import speech_recognition as sr
@@ -14,10 +15,20 @@ import voice
 import cursor
 #\\\\\\\\ local modules //#
 
+#// argument parsing \\\\\\\\#
+parser = argparse.ArgumentParser(description='Sapphire - A simple, actually helpful personal assistant leveraging Google Speech Recognition and GPT-3, for programmers')
+parser.add_argument('--calibrate', action='store_true', help="Don't calibrate for ambient noise on startup")
+parser.add_argument('--keyboard', action='store_true', help="Use keyboard input instead of speech recognition")
+
+args = parser.parse_args()
+#\\\\\\\\ argument parsing //#
+
 
 def main():
 	openai.api_key = os.environ['OPENAI_KEY']
 
+	cache_path = os.path.expanduser('~') + '/.cache/sapphire/' 
+	
 	#? get name of distribution from /etc/os-release
 	operating_system = functions.get_os()
 
@@ -31,9 +42,22 @@ def main():
 	#? shorten pause_threshold from 0.8s to 0.5s
 	r.pause_threshold  = 0.5
 
+	
 	#? calibrate for ambient noise level
-	r.energy_threshold = functions.calibrate(m, r)
+	if not args.keyboard:
+		if os.path.exists(cache_path + 'noise_calibration') == False:
+			os.makedirs(cache_path)
 
+		if args.calibrate:
+			r.energy_threshold = functions.calibrate(m, r)
+			with open(cache_path + 'noise_calibration', "w") as f:
+				f.write(str(r.energy_threshold))
+
+		else:
+			with open(cache_path + 'noise_calibration', 'r') as f:
+				r.energy_threshold = float(f.readline())
+
+	
 	print(cursor.clear, end='')
 
 
@@ -56,7 +80,7 @@ def main():
 			previous_reply = reply + '\n\n'
 
 		#? use speech recognition to prompt the user for a request
-		request = functions.listen(m, r)
+		request = functions.listen(m, r, args.keyboard)
 
 		#? check if the user has requested to exit
 		if functions.should_exit(request):
@@ -75,7 +99,7 @@ def main():
 
 		#? request a completion of the prompt and perform any necessary actions
 		if request != '':
-			reply = functions.complete(m, r, request, prompt)
+			reply = functions.complete(m, r, request, prompt, args.keyboard)
 
 	#? stop logging and exit with the exit sound
 	log.close()
