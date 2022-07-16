@@ -17,8 +17,8 @@ import cursor
 
 #// argument parsing \\\\\\\\#
 parser = argparse.ArgumentParser(description='Sapphire - A simple, actually helpful personal assistant leveraging Google Speech Recognition and GPT-3, for programmers')
-parser.add_argument('--calibrate', action='store_true', help="Don't calibrate for ambient noise on startup")
-parser.add_argument('--keyboard', action='store_true', help="Use keyboard input instead of speech recognition")
+parser.add_argument('-c', '--calibrate', action='store_true', help="Don't calibrate for ambient noise on startup")
+parser.add_argument('-k', '--keyboard', action='store_true', help="Use keyboard input instead of speech recognition")
 
 args = parser.parse_args()
 #\\\\\\\\ argument parsing //#
