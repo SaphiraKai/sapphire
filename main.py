@@ -82,13 +82,13 @@ def main():
 		#? use speech recognition to prompt the user for a request
 		request = functions.listen(m, r, args.keyboard)
 
-		#? check if the user has requested to exit
-		if functions.should_exit(request):
-			break
-
 		#? getting the request failed, restart the loop
-		elif request == None:
+		if request == None:
 			continue
+
+		#? check if the user has requested to exit
+		elif functions.should_exit(request):
+			break
 
 		#? play processing sound
 		else:
