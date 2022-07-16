@@ -100,6 +100,9 @@ def main():
 		#? request a completion of the prompt and perform any necessary actions
 		if request != '':
 			reply = functions.complete(m, r, request, prompt, args.keyboard)
+		
+		if reply == None:
+			reply = ''
 
 	#? stop logging and exit with the exit sound
 	log.close()
