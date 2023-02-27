@@ -106,7 +106,10 @@ def main():
 
 		#? request a completion of the prompt and perform any necessary actions
 		if request != '':
-			reply = functions.complete(m, r, request, prompt, args.keyboard)
+			try:
+				reply = functions.complete(m, r, request, prompt, args.keyboard)
+			except KeyboardInterrupt:
+				continue
 		
 		if reply == None:
 			reply = ''
