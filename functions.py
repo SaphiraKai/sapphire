@@ -17,7 +17,7 @@ import config.complete
 #// functions \\\\\\\\#
 #? play the exit sound and then quit
 def exit():
-	voice.play("exit")
+	voice.play("exit", True)
 	quit()
 
 
