@@ -45,7 +45,7 @@ def main():
 	
 	#? calibrate for ambient noise level
 	if not args.keyboard:
-		if os.path.exists(cache_path + 'noise_calibration') == False:
+		if not os.path.exists(cache_path + 'noise_calibration'):
 			os.makedirs(cache_path)
 
 		if args.calibrate:
