@@ -46,9 +46,14 @@ def main():
 	#? calibrate for ambient noise level
 	if not args.keyboard:
 		if not os.path.exists(cache_path + 'noise_calibration'):
-			os.makedirs(cache_path)
-			f = open(cache_path + 'noise_calibration', 'w')
-			f.close()
+			try:
+				os.makedirs(cache_path)
+			except:
+				None
+
+			r.energy_threshold = functions.calibrate(m, r)
+			with open(cache_path + 'noise_calibration', "w") as f:
+				f.write(str(r.energy_threshold))
 
 		if args.calibrate:
 			r.energy_threshold = functions.calibrate(m, r)
