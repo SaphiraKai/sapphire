@@ -172,8 +172,20 @@ def complete(m, r, request, prompt, use_keyboard):
 		run_command(m, r, cmd, use_keyboard)
 		return '$ ' + cmd
 
+	elif reply.lstrip()[:4] in ['CODE', '```\n']:
+		code = '\n```\n' + reply.lstrip()[5:] + '\n```\n'
+		print(colors.reset + request + colors.cyan + code)
+		return code
+	
 	#? print reply from the engine
 	else:
 		print(colors.reset + request + colors.magenta + reply + '\n')
+		tts(reply)
 		return reply
+	
+#? speak the given reply using gTTS
+def tts(reply):
+	tts = gTTS(reply)
+	tts.save('/tmp/sapphire_tts.mp3')
+	call(['mpv', '--speed=1.25', '/tmp/sapphire_tts.mp3'], stdout=PIPE, stderr=PIPE)
 #\\\\\\\\ functions //#
