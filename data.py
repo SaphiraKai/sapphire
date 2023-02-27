@@ -42,7 +42,11 @@ questions = ['is',
              'would']
 
 #? requests to exit
-exit_requests = ['nevermind.',
+exit_requests = ['all right thank you.',
+				 'alright thank you.',
+	             'okay thank you.',
+	        	 'thank you.',
+				 'nevermind.',
 	             'cancel.',
 	             'exit.',
 	             'done.',
