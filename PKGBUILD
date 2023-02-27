@@ -1,6 +1,6 @@
 # Maintainer: Saphira Kai
 pkgname=sapphire
-pkgver=r11.6eb221c
+pkgver=r28.d710b33
 pkgrel=1
 epoch=
 pkgdesc="An actually helpful personal assistant using GPT-3"
