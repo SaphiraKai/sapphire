@@ -2,7 +2,8 @@
 import openai
 from sys import stdout
 import speech_recognition as sr
-from subprocess import call
+from subprocess import call, PIPE
+from gtts import gTTS
 #\\\\\\\\ global modules //
 
 #// local modules \\\\\\\\#
